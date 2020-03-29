@@ -8,6 +8,8 @@ mymon(MySQL-Monitor) 是夜莺用来监控MySQL数据库运行状态的一个插
 - 所有metric加了mysql.的前缀，上报格式如：mysql.Innodb_buffer_pool_pages_dirty
 - endpoint支持shell命令的方式采集
 
+**注意：n9e版本至少需要高于[v1.1.0](https://github.com/didi/nightingale/releases/tag/v1.1.0)**
+
 ## Installation
 
 ```bash
@@ -18,34 +20,6 @@ make
 
 # Add to crontab
 echo '* * * * * root cd ${WORKPATH} && ./mymon -c etc/myMon.cfg' > /etc/cron.d/mymon
-```
-
-## Configuration
-
-配置文件采用INI标准。 
-
-```ini
-[default]
-basedir = . # 工作目录
-log_dir = ./fixtures # 日志目录，默认日志文件为myMon.log,旧版本有log_file项，如果同时设置了，会优先采用log_file
-snapshot_dir = ./snapshot # 保存快照(process, innodb status)的目录
-snapshot_day = 10 # 保存快照的时间(日)
-log_level  = 5 #  日志级别[RFC5424]
-# 0 LevelEmergency
-# 1 LevelAlert
-# 2 LevelCritical
-# 3 LevelError
-# 4 LevelWarning
-# 5 LevelNotice
-# 6 LevelInformational
-# 7 LevelDebug
-n9e_api=http://127.0.0.1:2058/api/collector/push # n9e连接地址
-
-[mysql]
-user=root # 数据库用户名
-password=1tIsB1g3rt # 您的数据库密码
-host=127.0.0.1 # 数据库连接地址
-port=3306 # 数据库端口
 ```
 
 ## Metric
