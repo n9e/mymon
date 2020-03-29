@@ -14,14 +14,12 @@
 package main
 
 import (
-	"bufio"
 	"bytes"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"reflect"
-	"regexp"
 	"sort"
 	"strings"
 
@@ -39,7 +37,6 @@ func SendData(conf *common.Config, data []*MetaData) ([]byte, error) {
 	}
 	data = needSend
 
-	data = filterIgnoreData(conf, data)
 	js, err := json.Marshal(data)
 	if err != nil {
 		Log.Debug("parse json data error: %+v", err)
@@ -58,80 +55,6 @@ func SendData(conf *common.Config, data []*MetaData) ([]byte, error) {
 
 	defer func() { _ = res.Body.Close() }()
 	return ioutil.ReadAll(res.Body)
-}
-
-func parseLine(line string) map[string]string {
-	var parseRes map[string]string
-	// remove space and \n
-	line = strings.Replace(strings.TrimSpace(line), "\n", "", -1)
-
-	// match metric, tag and value
-	reMetricTagValue, _ := regexp.Compile("^([0-9A-Za-z_,]+)" + TagSplitChar + "?([0-9A-Za-z_,=]*)" + ValueSplitChar + "?([0-9A-Za-z_]*)$")
-	matchMetricTagValue := reMetricTagValue.FindSubmatch([]byte(line))
-	if len(matchMetricTagValue) > 0 {
-		parseRes = map[string]string{
-			"metric": string(matchMetricTagValue[1]),
-			"tag":    string(matchMetricTagValue[2]),
-			"value":  string(matchMetricTagValue[3]),
-		}
-	} else {
-		Log.Info("Error format of ignorefile: %s", line)
-	}
-	return parseRes
-}
-
-func filterIgnoreData(conf *common.Config, data []*MetaData) []*MetaData {
-	ignoreFile := conf.Base.IgnoreFile
-	if ignoreFile == "" {
-		return data
-	}
-	f, err := os.OpenFile(ignoreFile, os.O_RDONLY, 0644)
-	// ignorefile does not exists
-	if err != nil {
-		Log.Debug("ignorefile %s does not exist", ignoreFile)
-		return data
-	}
-	inputReader := bufio.NewReader(f)
-	for {
-		// get a line
-		line, err := inputReader.ReadString('\n')
-		// over if EOF
-		if err != nil {
-			break
-		}
-		// jump head
-		if strings.Contains(line, "FalconIgnore") {
-			continue
-		}
-		// jump annotation
-		if strings.HasPrefix(line, "#") {
-			continue
-		}
-
-		metricTagValue := parseLine(line)
-		metric := metricTagValue["metric"]
-		// wrong format of ignorefile
-		if metric == "" {
-			continue
-		}
-		tag := metricTagValue["tag"]
-		value := metricTagValue["value"]
-
-		for i, eachData := range data {
-			if metric != eachData.Metric && metric != "*" {
-				continue
-			}
-			if tag != "" && !tagSame(tag, eachData.Tags) {
-				continue
-			}
-			if value != "" {
-				data[i].SetValue(value)
-				continue
-			}
-			eachData.SetName("_" + eachData.Metric)
-		}
-	}
-	return data
 }
 
 func tagSame(tag1, tag2 string) bool {

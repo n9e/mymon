@@ -28,7 +28,6 @@ echo '* * * * * root cd ${WORKPATH} && ./mymon -c etc/myMon.cfg' > /etc/cron.d/m
 [default]
 basedir = . # 工作目录
 log_dir = ./fixtures # 日志目录，默认日志文件为myMon.log,旧版本有log_file项，如果同时设置了，会优先采用log_file
-ignore_file = ./falconignore # 配置忽略的metric项
 snapshot_dir = ./snapshot # 保存快照(process, innodb status)的目录
 snapshot_day = 10 # 保存快照的时间(日)
 log_level  = 5 #  日志级别[RFC5424]
@@ -52,9 +51,6 @@ port=3306 # 数据库端口
 ## Metric
 
 采集的metric信息，请参考./metrics.txt。该文件仅供参考，实际采集信息会根据MySQL版本、配置的不同而变化。
-
-### ignore项
-ignore项配置，是用来屏蔽之前在falcon中设好的报警项，会将原有的metric更改名称之后上传，使原有的报警策略不再生效。由于falcon中的屏蔽策略，只能屏蔽endpoint级别，所以在mymon中的ignore功能是帮助提高了报警屏蔽粒度，而非忽略该metric的上报。
 
 ### 同步延迟
 

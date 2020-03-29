@@ -27,7 +27,6 @@ func TestParseConfig(t *testing.T) {
 			Endpoint:     "endpoint",
 			LogFile:      "",
 			SnapshotDir:  "./snapshot",
-			IgnoreFile:   "./falconignore",
 			SnapshotDay:  10,
 			LogLevel:     5,
 			FalconClient: "http://127.0.0.1:1988/v1/push",

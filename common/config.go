@@ -30,7 +30,6 @@ type BaseConf struct {
 	LogFile       string
 	LogLevel      int
 	FalconClient  string
-	IgnoreFile    string
 }
 
 // DatabaseConf config about database
@@ -102,7 +101,6 @@ func readConf(file string) (conf Config, err error) {
 			EndpointShell: cfg.Section("default").Key("endpoint_shell").String(),
 			LogLevel:      logLevel,
 			FalconClient:  cfg.Section("default").Key("n9e_api").String(),
-			IgnoreFile:    cfg.Section("default").Key("ignore_file").String(),
 		},
 		DatabaseConf{
 			User:     cfg.Section("mysql").Key("user").String(),
