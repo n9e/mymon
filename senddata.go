@@ -28,15 +28,6 @@ import (
 
 // SendData Post the json of all result to falcon-agent
 func SendData(conf *common.Config, data []*MetaData) ([]byte, error) {
-	// 夜莺不支持COUNTER类型 过滤掉
-	needSend := []*MetaData{}
-	for _, m := range data {
-		if m.CounterType == Origin {
-			needSend = append(needSend, m)
-		}
-	}
-	data = needSend
-
 	js, err := json.Marshal(data)
 	if err != nil {
 		Log.Debug("parse json data error: %+v", err)
