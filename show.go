@@ -300,7 +300,7 @@ func parseInnodbSection(
 		}
 	case "LOG":
 		if strings.Contains(row, "Log sequence number") {
-			logSequenceNumberStr := strings.Split(row, "length ")[1].strip()
+			logSequenceNumberStr := strings.Split(row, "number ")[1]
 			logSequenceNumber, _ := strconv.Atoi(logSequenceNumberStr)
 			LogSequenceNumber := NewMetric(conf, "Log_Sequence_Number")
 			LogSequenceNumber.SetValue(logSequenceNumber)
@@ -308,7 +308,7 @@ func parseInnodbSection(
 		}
 
 		if strings.Contains(row, "Log flushed up to") {
-			logFlushNumberStr := strings.Split(row, "to ")[1].strip()
+			logFlushNumberStr := strings.Split(row, "to   ")[1]
 			logFlushNumber, _ := strconv.Atoi(logFlushNumberStr)
 			LogFlushNumber := NewMetric(conf, "Log_Flush_Number")
 			LogFlushNumber.SetValue(logFlushNumber)
@@ -316,7 +316,7 @@ func parseInnodbSection(
 		}
 
 		if strings.Contains(row, "Pages flushed up to") {
-			pageFlushNumberStr := strings.Split(row, "to ")[1].strip()
+			pageFlushNumberStr := strings.Split(row, "to ")[1]
 			pageFlushNumber, _ := strconv.Atoi(pageFlushNumberStr)
 			PageFlushNumber := NewMetric(conf, "Page_Flush_Number")
 			PageFlushNumber.SetValue(pageFlushNumber)
@@ -324,7 +324,7 @@ func parseInnodbSection(
 		}
 
 		if strings.Contains(row, "Last checkpoint at") {
-			lastCheckpointNumberStr := strings.Split(row, "at ")[1]
+			lastCheckpointNumberStr := strings.Split(row, "at  ")[1]
 			lastCheckpointNumber, _ := strconv.Atoi(lastCheckpointNumberStr)
 			LastCheckpointNumber := NewMetric(conf, "Last_Checkpoint_Number")
 			LastCheckpointNumber.SetValue(lastCheckpointNumber)
